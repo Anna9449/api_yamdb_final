@@ -1,13 +1,24 @@
+
+from django.db import models
+from categories.models import Categories
+
+from genres.models import Genres
+
+
+class Titles(models.Model):
+    name = models.TextField(max_length=256)
+    year = models.IntegerField()
+    description = models.TextField(null=True)
+    genre = models.ManyToManyField(Genres)
+    category = models.ForeignKey(Categories, on_delete=models.SET_NULL,
+                                 null=True, related_name='titles')
+
 from django.contrib.auth import get_user_model
 from django.db import models
 
 LENGTH_TEXT_OUTPUT = 30
 
 User = get_user_model()
-
-
-class Title(models.Model):
-    pass
 
 
 class Review(models.Model):
@@ -69,3 +80,4 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.text[:LENGTH_TEXT_OUTPUT]
+
