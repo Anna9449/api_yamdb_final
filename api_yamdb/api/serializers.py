@@ -1,10 +1,8 @@
 from rest_framework import serializers
-from titles.models import Review, Comment
-
 
 from categories.models import Categories
 from genres.models import Genres
-from titles.models import Titles
+from titles.models import Comment, Review, Titles
 
 
 class TitleSerializer(serializers.ModelSerializer):
