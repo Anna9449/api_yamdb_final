@@ -6,6 +6,7 @@ from api.views import (
     ReviewViewSet, CommentViewSet
 )
 
+
 app_name = "api"
 
 v1_router = routers.DefaultRouter()
