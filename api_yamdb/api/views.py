@@ -1,4 +1,9 @@
+
 from rest_framework import filters, viewsets
+from django_filters import FilterSet
+from django_filters import CharFilter, NumberFilter
+from django_filters.rest_framework import DjangoFilterBackend
+
 from rest_framework.response import Response
 from django.db import IntegrityError
 from django.db.models import Avg
@@ -10,6 +15,7 @@ from api.serializers import (
     CategorySerializer, TitleSerializer,
     GenreSerializer, ReviewSerializer, CommentSerializer
 )
+
 from categories.models import Categories
 from genres.models import Genres
 from titles.models import Titles, Review
