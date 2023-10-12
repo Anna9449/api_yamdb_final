@@ -1,12 +1,10 @@
 from datetime import datetime
 
 from rest_framework import serializers
-from titles.models import Review, Comment
-
 
 from categories.models import Categories
 from genres.models import Genres
-from titles.models import Titles
+from titles.models import Comment, Review, Titles
 
 
 class TitleSerializer(serializers.ModelSerializer):
@@ -58,13 +56,20 @@ class CategorySerializer(serializers.ModelSerializer):
 class ReviewSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(
         read_only=True,
-        slug_field='username'
+        slug_field='username',
     )
 
     class Meta:
         model = Review
-        fields = ('id', 'text', 'author', 'score', 'pub_date',)
+        exclude = ('title', )
         read_only_fields = ('title',)
+
+    def validate_score(self, value):
+        if value < 1 or value > 10:
+            raise serializers.ValidationError(
+                'Выберите оценку от 1 до 10!'
+            )
+        return value
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -75,6 +80,5 @@ class CommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Comment
-        fields = ('id', 'text', 'author', 'pub_date',)
+        exclude = ('review',)
         read_only_fields = ('review',)
-

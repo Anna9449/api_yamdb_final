@@ -22,8 +22,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'django_filters',
+    'titles.apps.TitlesConfig',
+    'api.apps.ApiConfig',
     'genres',
-    'titles',
     'categories',
     'users.apps.UsersConfig',
     'api.apps.ApiConfig',
@@ -92,9 +95,9 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru-RU'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'W-SU'
 
 USE_I18N = True
 

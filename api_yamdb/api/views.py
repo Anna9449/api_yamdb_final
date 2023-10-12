@@ -1,11 +1,21 @@
-from rest_framework import viewsets, filters
+
+from rest_framework import filters, viewsets
 from django_filters import FilterSet
 from django_filters import CharFilter, NumberFilter
 from django_filters.rest_framework import DjangoFilterBackend
-from django.shortcuts import get_object_or_404
-from rest_framework.response import Response
 
-from api.serializers import CategorySerializer, TitleSerializer, GenreSerializer, CommentSerializer, ReviewSerializer
+from rest_framework.response import Response
+from django.db import IntegrityError
+from django.db.models import Avg
+from django_filters import FilterSet, CharFilter, NumberFilter
+from django_filters.rest_framework import DjangoFilterBackend
+from django.shortcuts import get_object_or_404
+
+from api.serializers import (
+    CategorySerializer, TitleSerializer,
+    GenreSerializer, ReviewSerializer, CommentSerializer
+)
+
 from categories.models import Categories
 from genres.models import Genres
 from titles.models import Titles, Review
@@ -63,11 +73,24 @@ class ReviewViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return self.get_title().reviews
 
+    def update_rating(self):
+        rating = self.get_queryset().aggregate(Avg('score'))
+        return (Titles.objects.filter(pk=self.kwargs.get('title_id'))
+                .update(rating=int(rating['score__avg'])))
+
     def perform_create(self, serializer):
+        obj = self.get_queryset().filter(
+            author=self.request.user, title=self.get_title()
+        )
+        if obj:
+            raise IntegrityError(
+                'Вы уже опубликовали отзыв на это произведение!'
+            )
         serializer.save(
             author=self.request.user,
             title=self.get_title()
         )
+        self.update_rating()
 
 
 class CommentViewSet(viewsets.ModelViewSet):
