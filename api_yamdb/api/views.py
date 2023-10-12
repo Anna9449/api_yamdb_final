@@ -1,15 +1,14 @@
-
 from rest_framework import viewsets, filters
 from django_filters import FilterSet
 from django_filters import CharFilter, NumberFilter
 from django_filters.rest_framework import DjangoFilterBackend
-
+from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 
-from api.serializers import CategorySerializer, TitleSerializer, GenreSerializer
+from api.serializers import CategorySerializer, TitleSerializer, GenreSerializer, CommentSerializer, ReviewSerializer
 from categories.models import Categories
 from genres.models import Genres
-from titles.models import Titles
+from titles.models import Titles, Review
 
 
 class TitleFilter(FilterSet):
@@ -54,18 +53,12 @@ class CategoryViewSet(CustomListViewMixin, viewsets.ModelViewSet):
     queryset = Categories.objects.all()
     serializer_class = CategorySerializer
 
-from rest_framework import viewsets
-from django.shortcuts import get_object_or_404
-
-from .serializers import ReviewSerializer, CommentSerializer
-from titles.models import Review, Title
-
 
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
 
     def get_title(self):
-        return get_object_or_404(Title, pk=self.kwargs.get('title_id'))
+        return get_object_or_404(Titles, pk=self.kwargs.get('title_id'))
 
     def get_queryset(self):
         return self.get_title().reviews
@@ -91,4 +84,3 @@ class CommentViewSet(viewsets.ModelViewSet):
             author=self.request.user,
             review=self.get_review()
         )
-

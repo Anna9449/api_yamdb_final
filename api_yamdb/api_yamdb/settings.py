@@ -16,8 +16,6 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
-    'titles.apps.TitlesConfig',
-    'api.apps.ApiConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -28,6 +26,7 @@ INSTALLED_APPS = [
     'titles',
     'categories',
     'users.apps.UsersConfig',
+    'api.apps.ApiConfig',
 
 ]
 

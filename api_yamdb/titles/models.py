@@ -24,7 +24,7 @@ User = get_user_model()
 class Review(models.Model):
     text = models.TextField('Текст отзыва')
     title = models.ForeignKey(
-        Title,
+        Titles,
         on_delete=models.CASCADE,
         verbose_name='Произведение',
         related_name='reviews'
