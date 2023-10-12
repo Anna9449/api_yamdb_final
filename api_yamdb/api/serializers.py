@@ -4,41 +4,34 @@ from rest_framework import serializers
 
 from categories.models import Categories
 from genres.models import Genres
-from titles.models import Comment, Review, Titles
+from reviews.models import Comment, Review, Title
 
 
 class TitleSerializer(serializers.ModelSerializer):
+    genre = serializers.SlugRelatedField(
+        many=True,
+        read_only=False,
+        queryset=Genres.objects.all(),
+        slug_field="slug"
+    )
+
+    category = serializers.SlugRelatedField(
+        read_only=False,
+        queryset=Categories.objects.all(),
+        slug_field="slug"
+    )
+
     class Meta:
-        model = Titles
+        model = Title
         fields = "__all__"
 
     def validate_year(self, value):
         current_year = datetime.now().year
         if value > current_year:
-            raise serializers.ValidationError('Год выпуска не может быть больше текущего')
+            raise serializers.ValidationError(
+                'Год выпуска не может быть больше текущего'
+            )
         return value
-
-    def validate_genre(self, value):
-        for genre in value:
-            genre = Genres.objects.get(slug=genre)
-            if not genre:
-                raise serializers.ValidationError("Нельзя добавить произведение с несуществующим жанром")
-        return value
-
-    def validate_category(self, value):
-        category = Categories.objects.get(slug=value)
-        if not category:
-            raise serializers.ValidationError("Нельзя добавить произведение с несуществующей категорией")
-        return value
-
-
-    def create(self, validated_data):
-        user = self.context['request'].user
-        if not user.admin:
-            raise serializers.ValidationError('Произведение может добавить только Админ')
-        super().create(validated_data)
-
-
 
 
 class GenreSerializer(serializers.ModelSerializer):

@@ -4,8 +4,8 @@ from django.core.management.base import BaseCommand
 from django.utils.dateparse import parse_datetime
 from django.core.exceptions import ObjectDoesNotExist
 
-from titles.models import Review
-from titles.models import Titles
+from reviews.models import Review
+from reviews.models import Titles
 from users.models import MyUser
 
 

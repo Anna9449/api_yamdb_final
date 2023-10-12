@@ -3,7 +3,7 @@ import csv
 from django.core.management.base import BaseCommand
 from django.core.exceptions import ObjectDoesNotExist
 
-from titles.models import Titles, Categories
+from reviews.models import Titles, Categories
 
 
 class Command(BaseCommand):

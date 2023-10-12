@@ -10,7 +10,7 @@ LENGTH_TEXT_OUTPUT = 30
 User = get_user_model()
 
 
-class Titles(models.Model):
+class Title(models.Model):
     name = models.TextField(max_length=256)
     year = models.IntegerField()
     description = models.TextField(null=True)
@@ -23,7 +23,7 @@ class Titles(models.Model):
 class Review(models.Model):
     text = models.TextField('Текст отзыва')
     title = models.ForeignKey(
-        Titles,
+        Title,
         on_delete=models.CASCADE,
         verbose_name='Произведение',
         related_name='reviews'
