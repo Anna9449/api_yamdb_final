@@ -1,6 +1,8 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+import shortuuid
+
 USER = 'user'
 ADMIN = 'admin'
 MODERATOR = 'moderator'
@@ -18,7 +20,9 @@ class MyUser(AbstractUser):
     role = models.CharField(
         'Роль', max_length=25, choices=ROLE_CHOICES, default=USER
     )
-    confirmation_code = models.CharField(max_length=30, blank=True)
+    confirmation_code = models.CharField(
+        max_length=30, default=shortuuid.uuid()[:6], blank=True
+    )
 
     @property
     def is_user(self):

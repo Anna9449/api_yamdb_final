@@ -1,24 +1,23 @@
-
 from django.db import models
-from categories.models import Categories
+from django.contrib.auth import get_user_model
+from django.core.validators import MaxValueValidator, MinValueValidator
 
+from categories.models import Categories
 from genres.models import Genres
 
+LENGTH_TEXT_OUTPUT = 30
 
-class Titles(models.Model):
+User = get_user_model()
+
+
+class Title(models.Model):
     name = models.TextField(max_length=256)
     year = models.IntegerField()
     description = models.TextField(null=True)
     genre = models.ManyToManyField(Genres)
     category = models.ForeignKey(Categories, on_delete=models.SET_NULL,
                                  null=True, related_name='titles')
-
-from django.contrib.auth import get_user_model
-from django.db import models
-
-LENGTH_TEXT_OUTPUT = 30
-
-User = get_user_model()
+    rating = models.PositiveIntegerField('Рейтинг', default=0)
 
 
 class Review(models.Model):
@@ -29,7 +28,7 @@ class Review(models.Model):
         verbose_name='Произведение',
         related_name='reviews'
     )
-    author = models.OneToOneField(
+    author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         verbose_name='Автор отзыва',
@@ -37,8 +36,13 @@ class Review(models.Model):
     )
     score = models.PositiveIntegerField(
         'Оценка',
-        default=10,
-        help_text=('Поставьте оценку от 1 до 10.'))
+        default=0,
+        validators=[
+            MaxValueValidator(10),
+            MinValueValidator(1)
+        ],
+        help_text=('Поставьте оценку от 1 до 10.')
+    )
     pub_date = models.DateTimeField(
         'Дата отзывы',
         auto_now_add=True
@@ -47,13 +51,15 @@ class Review(models.Model):
     class Meta:
         verbose_name = 'Отзыв'
         verbose_name_plural = 'Отзывы'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['title', 'author'],
+                name='unique_autor_title',
+            ),
+        ]
 
     def __str__(self):
         return self.text[:LENGTH_TEXT_OUTPUT]
-
-
-class Rating(models.Model):
-    pass
 
 
 class Comment(models.Model):
@@ -80,4 +86,3 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.text[:LENGTH_TEXT_OUTPUT]
-
