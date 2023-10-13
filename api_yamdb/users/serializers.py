@@ -4,6 +4,22 @@ from rest_framework import serializers
 from users.models import MyUser
 
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MyUser
+        fields = (
+        'username', 'email', 'first_name', 'last_name', 'bio', 'role')
+
+
+class NotAdminSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MyUser
+        fields = (
+            'username', 'email', 'first_name',
+            'last_name', 'bio', 'role')
+        read_only_fields = ('role',)
+
+
 class TokenSerializer(serializers.ModelSerializer):
     username = serializers.CharField(required=True)
     confirmation_code = serializers.CharField(required=True)
@@ -14,8 +30,8 @@ class TokenSerializer(serializers.ModelSerializer):
 
 
 class SignUpSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(required=True)
-    email = serializers.CharField(required=True)
+    # username = serializers.CharField(required=True)
+    # email = serializers.CharField(required=True)
 
     class Meta:
         model = MyUser
