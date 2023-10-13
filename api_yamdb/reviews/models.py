@@ -10,20 +10,20 @@ LENGTH_TEXT_OUTPUT = 30
 User = get_user_model()
 
 
-class Titles(models.Model):
+class Title(models.Model):
     name = models.TextField(max_length=256)
     year = models.IntegerField()
     description = models.TextField(null=True)
     genre = models.ManyToManyField(Genres)
     category = models.ForeignKey(Categories, on_delete=models.SET_NULL,
-                                 null=True, related_name='titles')
+                                 null=True, related_name='reviews')
     rating = models.PositiveIntegerField('Рейтинг', default=0)
 
 
 class Review(models.Model):
     text = models.TextField('Текст отзыва')
     title = models.ForeignKey(
-        Titles,
+        Title,
         on_delete=models.CASCADE,
         verbose_name='Произведение',
         related_name='reviews'

@@ -2,7 +2,7 @@ import csv
 
 from django.core.management.base import BaseCommand
 
-from titles.models import Titles, Genres
+from reviews.models import Title, Genres
 
 
 class Command(BaseCommand):
@@ -17,7 +17,7 @@ class Command(BaseCommand):
             for row in csv_reader:
                 title_id = int(row["title_id"])
                 genre_id = int(row["genre_id"])
-                title = Titles.objects.get(id=title_id)
+                title = Title.objects.get(id=title_id)
                 genre = Genres.objects.get(id=genre_id)
                 title.genre.add(genre)
 

@@ -1,16 +1,12 @@
-
 from rest_framework import filters, viewsets
-from django_filters import FilterSet
-from django_filters import CharFilter, NumberFilter
-from django_filters.rest_framework import DjangoFilterBackend
-
-from rest_framework.response import Response
 from django.db import IntegrityError
 from django.db.models import Avg
 from django_filters import FilterSet, CharFilter, NumberFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
-
+from django.http import Http404
+from rest_framework import status
+from rest_framework.response import Response
 from api.serializers import (
     CategorySerializer, TitleSerializer,
     GenreSerializer, ReviewSerializer, CommentSerializer
@@ -18,7 +14,7 @@ from api.serializers import (
 
 from categories.models import Categories
 from genres.models import Genres
-from titles.models import Titles, Review
+from reviews.models import Title, Review
 
 
 class TitleFilter(FilterSet):
@@ -28,25 +24,16 @@ class TitleFilter(FilterSet):
     year = NumberFilter()
 
     class Meta:
-        model = Titles
+        model = Title
         fields = ["category", "genre", "name", "year"]
 
 
 class CustomListViewMixin:
-    def list(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())
-        serializer = self.get_serializer(queryset, many=True)
-        data = {
-            "count": len(serializer.data),
-            "next": "string",  # Пока не понимаю что сюда вставить надо
-            "previous": "string",  # Пока не понимаю что сюда вставить надо
-            "results": serializer.data,
-        }
-        return Response(data)
+    pass
 
 
 class TitleViewSet(CustomListViewMixin, viewsets.ModelViewSet):
-    queryset = Titles.objects.all()
+    queryset = Title.objects.all()
     serializer_class = TitleSerializer
     filter_backends = (DjangoFilterBackend, filters.SearchFilter)
     filter_class = TitleFilter
@@ -57,6 +44,16 @@ class GenreViewSet(CustomListViewMixin, viewsets.ModelViewSet):
     serializer_class = GenreSerializer
     filter_backends = (filters.SearchFilter,)
     search_fields = ("name",)
+    lookup_field = 'slug'
+
+    def destroy(self, request, *args, **kwargs):
+        try:
+            slug = self.kwargs['slug']
+            delete_genre = Genres.objects.filter(slug=slug)
+            self.perform_destroy(delete_genre)
+        except Http404:
+            pass
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class CategoryViewSet(CustomListViewMixin, viewsets.ModelViewSet):
@@ -68,14 +65,14 @@ class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
 
     def get_title(self):
-        return get_object_or_404(Titles, pk=self.kwargs.get('title_id'))
+        return get_object_or_404(Title, pk=self.kwargs.get('title_id'))
 
     def get_queryset(self):
         return self.get_title().reviews
 
     def update_rating(self):
         rating = self.get_queryset().aggregate(Avg('score'))
-        return (Titles.objects.filter(pk=self.kwargs.get('title_id'))
+        return (Title.objects.filter(pk=self.kwargs.get('title_id'))
                 .update(rating=int(rating['score__avg'])))
 
     def perform_create(self, serializer):
