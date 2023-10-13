@@ -5,7 +5,7 @@ from django.utils.dateparse import parse_datetime
 from django.core.exceptions import ObjectDoesNotExist
 
 from reviews.models import Review
-from reviews.models import Titles
+from reviews.models import Title
 from users.models import MyUser
 
 
@@ -20,7 +20,7 @@ class Command(BaseCommand):
 
             for row in csv_reader:
                 try:
-                    title = Titles.objects.get(id=int(row["title_id"]))
+                    title = Title.objects.get(id=int(row["title_id"]))
                 except ObjectDoesNotExist:
                     self.stdout.write(
                         self.style.ERROR(

@@ -3,14 +3,15 @@ import csv
 from django.core.management.base import BaseCommand
 from django.core.exceptions import ObjectDoesNotExist
 
-from reviews.models import Titles, Categories
+from reviews.models import Title, Categories
+
 
 
 class Command(BaseCommand):
-    help = "Load data from titles.csv into the database"
+    help = "Load data from reviews.csv into the database"
 
     def handle(self, *args, **options):
-        csv_file_path = "static/data/titles.csv"
+        csv_file_path = "static/data/reviews.csv"
 
         with open(csv_file_path, "r") as csv_file:
             csv_reader = csv.DictReader(csv_file)
@@ -21,11 +22,11 @@ class Command(BaseCommand):
                 except ObjectDoesNotExist:
                     self.stdout.write(
                         self.style.ERROR(
-                            f'MyUser with id {row["author"]} does not exist. Skipping this row.'
+                            f'Category does not exist. Skipping this row.'
                         )
                     )
                     continue
-                title = Titles(
+                title = Title(
                     name=row["name"], year=int(row["year"]), category=category
                 )
                 title.save()

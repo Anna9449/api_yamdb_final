@@ -12,10 +12,10 @@ from tests.utils import (
 @pytest.mark.django_db(transaction=True)
 class Test05ReviewAPI:
 
-    TITLE_DETAIL_URL_TEMPLATE = '/api/v1/titles/{title_id}/'
-    REVIEWS_URL_TEMPLATE = '/api/v1/titles/{title_id}/reviews/'
+    TITLE_DETAIL_URL_TEMPLATE = '/api/v1/reviews/{title_id}/'
+    REVIEWS_URL_TEMPLATE = '/api/v1/reviews/{title_id}/reviews/'
     REVIEW_DETAIL_URL_TEMPLATE = (
-        '/api/v1/titles/{title_id}/reviews/{review_id}/'
+        '/api/v1/reviews/{title_id}/reviews/{review_id}/'
     )
 
     def test_01_review_not_auth(self, client, admin_client, admin, user_client,
