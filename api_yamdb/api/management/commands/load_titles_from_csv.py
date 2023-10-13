@@ -6,6 +6,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from reviews.models import Title, Categories
 
 
+
 class Command(BaseCommand):
     help = "Load data from reviews.csv into the database"
 

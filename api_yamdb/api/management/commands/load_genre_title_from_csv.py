@@ -5,6 +5,7 @@ from django.core.management.base import BaseCommand
 from reviews.models import Title, Genres
 
 
+
 class Command(BaseCommand):
     help = "Load data from genre_title.csv into the database"
 

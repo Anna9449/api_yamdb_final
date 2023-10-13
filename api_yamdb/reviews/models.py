@@ -16,7 +16,7 @@ class Title(models.Model):
     description = models.TextField(null=True)
     genre = models.ManyToManyField(Genres)
     category = models.ForeignKey(Categories, on_delete=models.SET_NULL,
-                                 null=True, related_name='reviews')
+                                 null=True, related_name='titles')
     rating = models.PositiveIntegerField('Рейтинг', default=0)
 
 

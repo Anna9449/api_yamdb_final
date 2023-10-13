@@ -20,7 +20,7 @@ class TitleSerializer(serializers.ModelSerializer):
         queryset=Categories.objects.all(),
         slug_field="slug"
     )
-    
+
     class Meta:
         model = Title
         fields = "__all__"
@@ -29,8 +29,9 @@ class TitleSerializer(serializers.ModelSerializer):
     def validate_year(self, value):
         current_year = datetime.now().year
         if value > current_year:
-            raise serializers.ValidationError('Год выпуска не может быть больше текущего')
-        return value
+            raise serializers.ValidationError(
+                'Год выпуска не может быть больше текущего'
+            )
 
 
 class GenreSerializer(serializers.ModelSerializer):
