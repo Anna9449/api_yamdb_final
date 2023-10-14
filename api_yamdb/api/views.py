@@ -1,36 +1,26 @@
-from rest_framework import filters, viewsets, permissions, status, generics
-from django.core.mail import send_mail
+from categories.models import Categories
 from django.core.exceptions import BadRequest
+from django.core.mail import send_mail
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
-from api.permissions import IsAuthorModeratorAdminOrReadOnly
-from django.http import Http404
-from rest_framework.decorators import action
 from django_filters import CharFilter, FilterSet, NumberFilter
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, permissions, status, viewsets
-from rest_framework.response import Response
+from genres.models import Genres
+from rest_framework import filters, generics, permissions, status, viewsets
+from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
-
-from api.serializers import (
-    CategorySerializer, TitleSerializer,
-    GenreSerializer, ReviewSerializer, CommentSerializer,
-    TokenSerializer, SignUpSerializer,
-    UserSerializer, NotAdminSerializer
-)
-
-from api.permissions import IsAdminOrReadOnly, IsAuthorModeratorAdminOrReadOnly
-from api.serializers import (CategorySerializer, CommentSerializer,
-                             GenreSerializer, ReviewSerializer,
-                             TitleSerializer)
-from categories.models import Categories
-from genres.models import Genres
-from reviews.models import Title, Review
-from users.models import MyUser
-from api.permissions import AdminStaffOnly
 from reviews.models import Review, Title
+from users.models import MyUser
+
+from api.permissions import (AdminStaffOnly, IsAdminOrReadOnly,
+                             IsAuthorModeratorAdminOrReadOnly)
+from api.serializers import (CategorySerializer, CommentSerializer,
+                             GenreSerializer, NotAdminSerializer,
+                             ReviewSerializer, SignUpSerializer,
+                             TitleSerializer, TokenSerializer, UserSerializer)
 
 
 class TitleFilter(FilterSet):
