@@ -12,7 +12,7 @@ User = get_user_model()
 
 class Title(models.Model):
     name = models.TextField(max_length=256)
-    year = models.IntegerField()
+    year = models.IntegerField(null=True)
     description = models.TextField(null=True)
     genre = models.ManyToManyField(Genres)
     category = models.ForeignKey(Categories, on_delete=models.SET_NULL,
@@ -80,7 +80,7 @@ class Comment(models.Model):
         auto_now_add=True
     )
 
-    class Meta():
+    class Meta:
         verbose_name = 'Комментарий'
         verbose_name_plural = 'Комментарии'
 

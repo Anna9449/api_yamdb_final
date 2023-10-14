@@ -9,10 +9,10 @@ from tests.utils import (check_fields, check_pagination, create_comments,
 @pytest.mark.django_db(transaction=True)
 class Test06CommentAPI:
     COMMENTS_URL_TEMPLATE = (
-        '/api/v1/reviews/{title_id}/reviews/{review_id}/comments/'
+        '/api/v1/titles/{title_id}/reviews/{review_id}/comments/'
     )
     COMMENT_DETAIL_URL_TEMPLATE = (
-        '/api/v1/reviews/{title_id}/reviews/{review_id}/comments/{comment_id}/'
+        '/api/v1/titles/{title_id}/reviews/{review_id}/comments/{comment_id}/'
     )
 
     def test_01_comment_not_auth(self, client, admin_client, admin,
@@ -307,7 +307,7 @@ class Test06CommentAPI:
         }
         comments, reviews, titles = create_comments(admin_client, author_map)
         self.COMMENT_DETAIL_URL_TEMPLATE = (
-            '/api/v1/reviews/{title_id}/reviews/'
+            '/api/v1/titles/{title_id}/reviews/'
             '{review_id}/comments/{comment_id}/'
         )
         url = self.COMMENT_DETAIL_URL_TEMPLATE.format(
