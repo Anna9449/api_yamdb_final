@@ -80,7 +80,7 @@ class Comment(models.Model):
         auto_now_add=True
     )
 
-    class Meta():
+    class Meta:
         verbose_name = 'Комментарий'
         verbose_name_plural = 'Комментарии'
 
