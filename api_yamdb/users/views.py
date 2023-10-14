@@ -1,5 +1,5 @@
 from django.core.mail import send_mail
-from rest_framework import status, generics, viewsets, permissions
+from rest_framework import generics, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
 from rest_framework.permissions import IsAuthenticated
@@ -7,9 +7,9 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from users.models import MyUser
-from users.serializers import (TokenSerializer, SignUpSerializer,
-                               UserSerializer, NotAdminSerializer)
 from users.permissions import AdminStaffOnly
+from users.serializers import (NotAdminSerializer, SignUpSerializer,
+                               TokenSerializer, UserSerializer)
 
 
 class UserViewSet(viewsets.ModelViewSet):
