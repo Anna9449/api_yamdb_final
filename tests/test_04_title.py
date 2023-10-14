@@ -11,8 +11,8 @@ from tests.utils import (
 @pytest.mark.django_db(transaction=True)
 class Test04TitleAPI:
 
-    TITLES_URL = '/api/v1/reviews/'
-    TITLES_DETAIL_URL_TEMPLATE = '/api/v1/reviews/{title_id}/'
+    TITLES_URL = '/api/v1/titles/'
+    TITLES_DETAIL_URL_TEMPLATE = '/api/v1/titles/{title_id}/'
 
     def test_01_title_not_auth(self, client):
         response = client.get(self.TITLES_URL)

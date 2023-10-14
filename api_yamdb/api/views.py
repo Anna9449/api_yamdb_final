@@ -1,13 +1,13 @@
-from rest_framework import filters, viewsets, permissions
-from django.core.exceptions import BadRequest
-from django.db.models import Avg
-from django_filters import FilterSet, CharFilter, NumberFilter
-from django_filters.rest_framework import DjangoFilterBackend
-from django.shortcuts import get_object_or_404
-from api.permissions import IsAuthorModeratorAdminOrReadOnly
-from django.http import Http404
-from rest_framework import status
+from rest_framework import filters, permissions, status, viewsets
 from rest_framework.response import Response
+from django.db.models import Avg
+from django.core.exceptions import BadRequest
+from django_filters import CharFilter, FilterSet, NumberFilter
+from django_filters.rest_framework import DjangoFilterBackend
+from django.http import Http404
+from django.shortcuts import get_object_or_404
+
+from api.permissions import IsAuthorModeratorAdminOrReadOnly
 from api.serializers import (
     CategorySerializer, TitleSerializer,
     GenreSerializer, ReviewSerializer, CommentSerializer
@@ -28,9 +28,7 @@ class TitleFilter(FilterSet):
         fields = ["category", "genre", "name", "year"]
 
 
-
 class TitleViewSet(viewsets.ModelViewSet):
-
     queryset = Title.objects.all()
     serializer_class = TitleSerializer
     filter_backends = (DjangoFilterBackend, filters.SearchFilter)

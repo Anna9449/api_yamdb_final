@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('users', '0003_alter_myuser_confirmation_code'),
+        ('reviews', '0003_alter_title_year'),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='myuser',
-            name='confirmation_code',
-            field=models.CharField(blank=True, default='ScbHGs', max_length=30),
+            model_name='title',
+            name='rating',
+            field=models.PositiveIntegerField(default=None, verbose_name='Рейтинг'),
         ),
     ]
