@@ -128,7 +128,6 @@ REST_FRAMEWORK = {
         'user': '10000/day',
         'anon': '1000/day',
     },
-
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ],
