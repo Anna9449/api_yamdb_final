@@ -24,6 +24,7 @@ class TitleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Title
         fields = "__all__"
+        read_only_fields = ('rating',)
 
     def validate_year(self, value):
         current_year = datetime.now().year

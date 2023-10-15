@@ -31,8 +31,8 @@ class TokenSerializer(serializers.ModelSerializer):
 
 
 class SignUpSerializer(serializers.ModelSerializer):
-    # username = serializers.CharField(required=True)
-    # email = serializers.CharField(required=True)
+    username = serializers.CharField(required=True)
+    email = serializers.CharField(required=True)
 
     class Meta:
         model = MyUser
