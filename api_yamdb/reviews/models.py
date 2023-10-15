@@ -1,7 +1,8 @@
-from categories.models import Categories
 from django.contrib.auth import get_user_model
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+
+from categories.models import Categories
 from genres.models import Genres
 
 LENGTH_TEXT_OUTPUT = 30
@@ -35,7 +36,6 @@ class Review(models.Model):
     )
     score = models.PositiveIntegerField(
         'Оценка',
-        default=0,
         validators=[
             MaxValueValidator(10),
             MinValueValidator(1)
