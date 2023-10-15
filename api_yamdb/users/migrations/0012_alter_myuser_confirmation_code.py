@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('users', '0006_alter_myuser_confirmation_code'),
+        ('users', '0011_alter_myuser_confirmation_code'),
     ]
 
     operations = [
         migrations.AlterField(
             model_name='myuser',
             name='confirmation_code',
-            field=models.CharField(blank=True, default='UoDsLS', max_length=30),
+            field=models.CharField(blank=True, default='FX3awc', max_length=30),
         ),
     ]
