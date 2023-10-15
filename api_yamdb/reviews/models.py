@@ -17,7 +17,11 @@ class Title(models.Model):
     genre = models.ManyToManyField(Genres)
     category = models.ForeignKey(Categories, on_delete=models.SET_NULL,
                                  null=True, related_name='titles')
-    rating = models.PositiveIntegerField('Рейтинг', default=0)
+    rating = models.PositiveIntegerField(
+        'Рейтинг',
+        null=True,
+        blank=True
+    )
 
 
 class Review(models.Model):
@@ -36,7 +40,6 @@ class Review(models.Model):
     )
     score = models.PositiveIntegerField(
         'Оценка',
-        default=0,
         validators=[
             MaxValueValidator(10),
             MinValueValidator(1)
