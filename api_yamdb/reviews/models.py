@@ -1,8 +1,7 @@
-from django.db import models
+from categories.models import Categories
 from django.contrib.auth import get_user_model
 from django.core.validators import MaxValueValidator, MinValueValidator
-
-from categories.models import Categories
+from django.db import models
 from genres.models import Genres
 
 LENGTH_TEXT_OUTPUT = 30
@@ -17,7 +16,7 @@ class Title(models.Model):
     genre = models.ManyToManyField(Genres)
     category = models.ForeignKey(Categories, on_delete=models.SET_NULL,
                                  null=True, related_name='titles')
-    rating = models.PositiveIntegerField('Рейтинг', default=0)
+    rating = models.PositiveIntegerField('Рейтинг', null=True, blank=True)
 
 
 class Review(models.Model):

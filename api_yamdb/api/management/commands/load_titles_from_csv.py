@@ -1,17 +1,16 @@
 import csv
 
-from django.core.management.base import BaseCommand
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.management.base import BaseCommand
 
-from reviews.models import Title, Categories
-
+from reviews.models import Categories, Title
 
 
 class Command(BaseCommand):
     help = "Load data from reviews.csv into the database"
 
     def handle(self, *args, **options):
-        csv_file_path = "static/data/reviews.csv"
+        csv_file_path = "static/data/titles.csv"
 
         with open(csv_file_path, "r") as csv_file:
             csv_reader = csv.DictReader(csv_file)
