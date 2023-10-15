@@ -1,19 +1,15 @@
-from categories.models import Categories
 from django.core.exceptions import BadRequest
 from django.core.mail import send_mail
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from django_filters import CharFilter, FilterSet, NumberFilter
 from django_filters.rest_framework import DjangoFilterBackend
-from genres.models import Genres
 from rest_framework import filters, generics, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
-from reviews.models import Review, Title
-from users.models import MyUser
 
 from api.permissions import (AdminStaffOnly, IsAdminOrReadOnly,
                              IsAuthorModeratorAdminOrReadOnly)
@@ -21,6 +17,10 @@ from api.serializers import (CategorySerializer, CommentSerializer,
                              GenreSerializer, NotAdminSerializer,
                              ReviewSerializer, SignUpSerializer,
                              TitleSerializer, TokenSerializer, UserSerializer)
+from categories.models import Categories
+from genres.models import Genres
+from reviews.models import Review, Title
+from users.models import MyUser
 
 
 class TitleFilter(FilterSet):
@@ -32,7 +32,6 @@ class TitleFilter(FilterSet):
     class Meta:
         model = Title
         fields = ["category", "genre", "name", "year"]
-
 
 
 class TitleViewSet(viewsets.ModelViewSet):

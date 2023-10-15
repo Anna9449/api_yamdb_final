@@ -1,11 +1,9 @@
 import csv
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import BaseCommand
 from django.utils.dateparse import parse_datetime
-from django.core.exceptions import ObjectDoesNotExist
-
-from reviews.models import Review
-from reviews.models import Title
+from reviews.models import Review, Title
 from users.models import MyUser
 
 
