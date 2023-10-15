@@ -1,20 +1,18 @@
-from rest_framework import filters, permissions, status, viewsets
-from rest_framework.response import Response
-from django.db.models import Avg
 from django.core.exceptions import BadRequest
+from django.db.models import Avg
+from django.shortcuts import get_object_or_404
 from django_filters import CharFilter, FilterSet, NumberFilter
 from django_filters.rest_framework import DjangoFilterBackend
-from django.http import Http404
-from django.shortcuts import get_object_or_404
+from rest_framework import filters, permissions, status, viewsets
+from rest_framework.response import Response
 
-from api.permissions import IsAuthorModeratorAdminOrReadOnly
-from api.serializers import (
-    CategorySerializer, TitleSerializer,
-    GenreSerializer, ReviewSerializer, CommentSerializer
-)
+from api.permissions import IsAdminOrReadOnly, IsAuthorModeratorAdminOrReadOnly
+from api.serializers import (CategorySerializer, CommentSerializer,
+                             GenreSerializer, ReviewSerializer,
+                             TitleSerializer)
 from categories.models import Categories
 from genres.models import Genres
-from reviews.models import Title, Review
+from reviews.models import Review, Title
 
 
 class TitleFilter(FilterSet):
@@ -33,6 +31,13 @@ class TitleViewSet(viewsets.ModelViewSet):
     serializer_class = TitleSerializer
     filter_backends = (DjangoFilterBackend, filters.SearchFilter)
     filter_class = TitleFilter
+    permission_classes = (IsAdminOrReadOnly,)
+
+    def update(self, request, *args, **kwargs):
+        if request.method == 'PUT':
+            return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+        return super().update(request, *args, **kwargs)
 
 
 class GenreViewSet(viewsets.ModelViewSet):
@@ -41,20 +46,32 @@ class GenreViewSet(viewsets.ModelViewSet):
     filter_backends = (filters.SearchFilter,)
     search_fields = ("name",)
     lookup_field = 'slug'
+    permission_classes = (IsAdminOrReadOnly,)
 
-    def destroy(self, request, *args, **kwargs):
-        try:
-            slug = self.kwargs['slug']
-            delete_genre = Genres.objects.filter(slug=slug)
-            self.perform_destroy(delete_genre)
-        except Http404:
-            pass
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    def retrieve(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def update(self, request, *args, **kwargs):
+        if request.method == 'PATCH':
+            return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+        return super().update(request, *args, **kwargs)
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Categories.objects.all()
     serializer_class = CategorySerializer
+    permission_classes = (IsAdminOrReadOnly,)
+    lookup_field = 'slug'
+    # permission_classes = (AllowAny,)
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ("name",)
+
+    def retrieve(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def update(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
