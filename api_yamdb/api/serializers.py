@@ -9,23 +9,45 @@ from reviews.models import Comment, Review, Title
 from users.models import MyUser
 
 
+class GenreSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Genres
+        fields = ('name', 'slug')
+        lookup_field = 'slug'
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Categories
+        fields = ('name', 'slug')
+        lookup_field = 'slug'
+
+
 class TitleSerializer(serializers.ModelSerializer):
+    genre = GenreSerializer(many=True)
+    category = CategorySerializer()
+
+    class Meta:
+        model = Title
+        fields = '__all__'
+        read_only_fields = ('rating',)
+
+
+class TitleCreateSerializer(serializers.ModelSerializer):
     genre = serializers.SlugRelatedField(
         many=True,
         read_only=False,
         queryset=Genres.objects.all(),
-        slug_field="slug"
+        slug_field='slug'
     )
-
     category = serializers.SlugRelatedField(
-        read_only=False,
-        queryset=Categories.objects.all(),
-        slug_field="slug"
+        slug_field='slug',
+        queryset=Categories.objects.all()
     )
 
     class Meta:
         model = Title
-        fields = "__all__"
+        fields = '__all__'
 
     def validate_year(self, value):
         current_year = datetime.now().year
@@ -33,20 +55,7 @@ class TitleSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 'Год выпуска не может быть больше текущего'
             )
-
-
-class GenreSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Genres
-        fields = ("name", "slug")
-        lookup_field = 'slug'
-
-
-class CategorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Categories
-        fields = ("name", "slug")
-        lookup_field = 'slug'
+        return value
 
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -100,7 +109,6 @@ class TokenSerializer(serializers.ModelSerializer):
     username = serializers.CharField(required=True)
     confirmation_code = serializers.CharField(required=True)
 
-
     class Meta:
         model = MyUser
         fields = ('username', 'confirmation_code')
@@ -114,13 +122,13 @@ class SignUpSerializer(serializers.ModelSerializer):
     def validate(self, data):
         pattern = r'^[\w.@+-]+$'
         if data['username'] == 'me':
-            raise serializers.ValidationError("Invalid username.")
+            raise serializers.ValidationError('Invalid username.')
         if len(data['username']) > 150:
             raise serializers.ValidationError(
-                "Username is too long (maximum 150 characters).")
+                'Username is too long (maximum 150 characters).')
         if not re.match(pattern, data['username']):
-            raise serializers.ValidationError("Invalid username format.")
+            raise serializers.ValidationError('Invalid username format.')
         if len(data['email']) > 254:
             raise serializers.ValidationError(
-                "Email is too long (maximum 254 characters).")
+                'Email is too long (maximum 254 characters).')
         return data

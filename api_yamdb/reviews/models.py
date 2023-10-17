@@ -1,7 +1,8 @@
-from categories.models import Categories
 from django.contrib.auth import get_user_model
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+
+from categories.models import Categories
 from genres.models import Genres
 
 LENGTH_TEXT_OUTPUT = 30
@@ -10,12 +11,14 @@ User = get_user_model()
 
 
 class Title(models.Model):
-    name = models.TextField(max_length=256)
-    year = models.IntegerField(null=True)
-    description = models.TextField(null=True)
-    genre = models.ManyToManyField(Genres)
+    name = models.TextField(
+        max_length=256, verbose_name='Название произведения')
+    year = models.IntegerField(null=True, verbose_name='Год выпуска')
+    description = models.TextField(null=True, verbose_name='Описание')
+    genre = models.ManyToManyField(Genres, verbose_name='Жанры')
     category = models.ForeignKey(Categories, on_delete=models.SET_NULL,
-                                 null=True, related_name='titles')
+                                 null=True, verbose_name='Категория',
+                                 related_name='titles')
     rating = models.PositiveIntegerField('Рейтинг', null=True, blank=True)
 
 
@@ -35,7 +38,6 @@ class Review(models.Model):
     )
     score = models.PositiveIntegerField(
         'Оценка',
-        default=0,
         validators=[
             MaxValueValidator(10),
             MinValueValidator(1)

@@ -7,28 +7,29 @@ from reviews.models import Categories, Title
 
 
 class Command(BaseCommand):
-    help = "Load data from reviews.csv into the database"
+    help = 'Load data from reviews.csv into the database'
 
     def handle(self, *args, **options):
-        csv_file_path = "static/data/titles.csv"
+        csv_file_path = 'static/data/titles.csv'
 
-        with open(csv_file_path, "r") as csv_file:
+        with open(csv_file_path, 'r') as csv_file:
             csv_reader = csv.DictReader(csv_file)
 
             for row in csv_reader:
                 try:
-                    category = Categories.objects.get(id=row["category"])
+                    category = Categories.objects.get(id=row['category'])
                 except ObjectDoesNotExist:
                     self.stdout.write(
                         self.style.ERROR(
-                            f'Category does not exist. Skipping this row.'
+                            'Category does not exist. Skipping this row.'
                         )
                     )
                     continue
                 title = Title(
-                    name=row["name"], year=int(row["year"]), category=category
+                    name=row['name'], year=int(row['year']), category=category
                 )
                 title.save()
                 self.stdout.write(
-                    self.style.SUCCESS(f"Successfully loaded data from {csv_file_path}")
+                    self.style.SUCCESS(
+                        f'Successfully loaded data from {csv_file_path}')
                 )
