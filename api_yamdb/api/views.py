@@ -16,7 +16,8 @@ from api.permissions import (AdminStaffOnly, IsAdminOrReadOnly,
 from api.serializers import (CategorySerializer, CommentSerializer,
                              GenreSerializer, NotAdminSerializer,
                              ReviewSerializer, SignUpSerializer,
-                             TitleSerializer, TokenSerializer, UserSerializer)
+                             TitleCreateSerializer, TitleSerializer,
+                             TokenSerializer, UserSerializer)
 from categories.models import Categories
 from genres.models import Genres
 from reviews.models import Review, Title
@@ -24,23 +25,28 @@ from users.models import MyUser
 
 
 class TitleFilter(FilterSet):
-    category = CharFilter(field_name="category__slug", lookup_expr="iexact")
-    genre = CharFilter(field_name="genre__slug", lookup_expr="iexact")
-    name = CharFilter(lookup_expr="icontains")
+    category = CharFilter(field_name='category__slug', lookup_expr='iexact')
+    genre = CharFilter(field_name='genre__slug', lookup_expr='iexact')
+    name = CharFilter(lookup_expr='icontains')
     year = NumberFilter()
 
     class Meta:
         model = Title
-        fields = ["category", "genre", "name", "year"]
+        fields = ['category', 'genre', 'name', 'year']
 
 
 class TitleViewSet(viewsets.ModelViewSet):
-
     queryset = Title.objects.all()
     serializer_class = TitleSerializer
-    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
-    filter_class = TitleFilter
+    create_serializer_class = TitleCreateSerializer
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = TitleFilter
     permission_classes = (IsAdminOrReadOnly,)
+
+    def get_serializer_class(self):
+        if self.request.method == 'POST' or self.request.method == 'PATCH':
+            return self.create_serializer_class
+        return super().get_serializer_class()
 
     def update(self, request, *args, **kwargs):
         if request.method == 'PUT':
@@ -53,7 +59,7 @@ class GenreViewSet(viewsets.ModelViewSet):
     queryset = Genres.objects.all()
     serializer_class = GenreSerializer
     filter_backends = (filters.SearchFilter,)
-    search_fields = ("name",)
+    search_fields = ('name',)
     lookup_field = 'slug'
     permission_classes = (IsAdminOrReadOnly,)
 
@@ -74,7 +80,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
     lookup_field = 'slug'
     # permission_classes = (AllowAny,)
     filter_backends = (filters.SearchFilter,)
-    search_fields = ("name",)
+    search_fields = ('name',)
 
     def retrieve(self, request, *args, **kwargs):
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)

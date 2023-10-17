@@ -11,12 +11,14 @@ User = get_user_model()
 
 
 class Title(models.Model):
-    name = models.TextField(max_length=256)
-    year = models.IntegerField(null=True)
-    description = models.TextField(null=True)
-    genre = models.ManyToManyField(Genres)
+    name = models.TextField(
+        max_length=256, verbose_name='Название произведения')
+    year = models.IntegerField(null=True, verbose_name='Год выпуска')
+    description = models.TextField(null=True, verbose_name='Описание')
+    genre = models.ManyToManyField(Genres, verbose_name='Жанры')
     category = models.ForeignKey(Categories, on_delete=models.SET_NULL,
-                                 null=True, related_name='titles')
+                                 null=True, verbose_name='Категория',
+                                 related_name='titles')
     rating = models.PositiveIntegerField('Рейтинг', null=True, blank=True)
 
 
