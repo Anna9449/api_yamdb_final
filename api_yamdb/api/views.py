@@ -9,6 +9,7 @@ from rest_framework.filters import SearchFilter
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
+import shortuuid
 
 from api.filters import TitleFilter
 from api.permissions import (AdminStaffOnly, IsAdminOrReadOnly,
@@ -149,13 +150,12 @@ class UserViewSet(viewsets.ModelViewSet):
         if request.method == 'GET':
             serializer = UserSerializer(user)
             return Response(serializer.data)
-        elif request.method == 'PATCH':
-            serializer = NotAdminSerializer(
-                user, data=request.data, partial=True
-            )
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-            return Response(serializer.data)
+        serializer = NotAdminSerializer(
+            user, data=request.data, partial=True
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
 
 
 class SignUpView(generics.CreateAPIView):
@@ -163,6 +163,8 @@ class SignUpView(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny,)
 
     def send_conformation_email(self, user):
+        user.confirmation_code = shortuuid.uuid()[:6]
+        user.save()
         send_mail(
             subject='Confirmation Code',
             message=f'Your confirmation code: {user.confirmation_code}',
@@ -212,6 +214,8 @@ class TokenCreateView(generics.CreateAPIView):
                 status=status.HTTP_404_NOT_FOUND
             )
         if request.data.get('confirmation_code') == user.confirmation_code:
+            user.confirmation_code = ''
+            user.save()
             token = RefreshToken.for_user(user).access_token
             return Response({'token': str(token)},
                             status=status.HTTP_201_CREATED)
