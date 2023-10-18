@@ -1,11 +1,8 @@
-import re
 from datetime import datetime
 
 from rest_framework import serializers
 
-from categories.models import Categories
-from genres.models import Genres
-from reviews.models import Comment, Review, Title
+from reviews.models import Categories, Comment, Genres, Review, Title
 from users.models import MyUser
 
 
@@ -120,15 +117,6 @@ class SignUpSerializer(serializers.ModelSerializer):
         fields = ('username', 'email')
 
     def validate(self, data):
-        pattern = r'^[\w.@+-]+$'
         if data['username'] == 'me':
             raise serializers.ValidationError('Invalid username.')
-        if len(data['username']) > 150:
-            raise serializers.ValidationError(
-                'Username is too long (maximum 150 characters).')
-        if not re.match(pattern, data['username']):
-            raise serializers.ValidationError('Invalid username format.')
-        if len(data['email']) > 254:
-            raise serializers.ValidationError(
-                'Email is too long (maximum 254 characters).')
         return data

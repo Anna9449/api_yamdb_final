@@ -2,7 +2,6 @@ from django.core.exceptions import BadRequest
 from django.core.mail import send_mail
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
-from django_filters import CharFilter, FilterSet, NumberFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, generics, permissions, status, viewsets
 from rest_framework.decorators import action
@@ -10,7 +9,9 @@ from rest_framework.filters import SearchFilter
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
+import shortuuid
 
+from api.filters import TitleFilter
 from api.permissions import (AdminStaffOnly, IsAdminOrReadOnly,
                              IsAuthorModeratorAdminOrReadOnly)
 from api.serializers import (CategorySerializer, CommentSerializer,
@@ -18,21 +19,8 @@ from api.serializers import (CategorySerializer, CommentSerializer,
                              ReviewSerializer, SignUpSerializer,
                              TitleCreateSerializer, TitleSerializer,
                              TokenSerializer, UserSerializer)
-from categories.models import Categories
-from genres.models import Genres
-from reviews.models import Review, Title
+from reviews.models import Categories, Genres, Review, Title
 from users.models import MyUser
-
-
-class TitleFilter(FilterSet):
-    category = CharFilter(field_name='category__slug', lookup_expr='iexact')
-    genre = CharFilter(field_name='genre__slug', lookup_expr='iexact')
-    name = CharFilter(lookup_expr='icontains')
-    year = NumberFilter()
-
-    class Meta:
-        model = Title
-        fields = ['category', 'genre', 'name', 'year']
 
 
 class TitleViewSet(viewsets.ModelViewSet):
@@ -78,7 +66,6 @@ class CategoryViewSet(viewsets.ModelViewSet):
     serializer_class = CategorySerializer
     permission_classes = (IsAdminOrReadOnly,)
     lookup_field = 'slug'
-    # permission_classes = (AllowAny,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
 
@@ -112,7 +99,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
         obj = self.get_queryset().filter(
             author=self.request.user, title=self.get_title()
         )
-        if obj:
+        if obj.exists():
             raise BadRequest(
                 'Вы уже опубликовали отзыв на это произведение!'
             )
@@ -163,13 +150,12 @@ class UserViewSet(viewsets.ModelViewSet):
         if request.method == 'GET':
             serializer = UserSerializer(user)
             return Response(serializer.data)
-        elif request.method == 'PATCH':
-            serializer = NotAdminSerializer(
-                user, data=request.data, partial=True
-            )
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-            return Response(serializer.data)
+        serializer = NotAdminSerializer(
+            user, data=request.data, partial=True
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
 
 
 class SignUpView(generics.CreateAPIView):
@@ -177,6 +163,8 @@ class SignUpView(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny,)
 
     def send_conformation_email(self, user):
+        user.confirmation_code = shortuuid.uuid()[:6]
+        user.save()
         send_mail(
             subject='Confirmation Code',
             message=f'Your confirmation code: {user.confirmation_code}',
@@ -226,6 +214,8 @@ class TokenCreateView(generics.CreateAPIView):
                 status=status.HTTP_404_NOT_FOUND
             )
         if request.data.get('confirmation_code') == user.confirmation_code:
+            user.confirmation_code = ''
+            user.save()
             token = RefreshToken.for_user(user).access_token
             return Response({'token': str(token)},
                             status=status.HTTP_201_CREATED)

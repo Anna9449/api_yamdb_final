@@ -2,12 +2,21 @@ from django.contrib.auth import get_user_model
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
-from categories.models import Categories
-from genres.models import Genres
-
 LENGTH_TEXT_OUTPUT = 30
 
 User = get_user_model()
+
+
+class Genres(models.Model):
+    name = models.TextField(max_length=256, verbose_name='Название жанра')
+    slug = models.SlugField(max_length=50, unique=True,
+                            verbose_name='Слаг жанра')
+
+
+class Categories(models.Model):
+    name = models.TextField(max_length=256, verbose_name='Названик категории')
+    slug = models.SlugField(max_length=50, unique=True,
+                            verbose_name='Слаг категории')
 
 
 class Title(models.Model):
