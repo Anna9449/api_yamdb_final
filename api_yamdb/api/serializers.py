@@ -3,9 +3,7 @@ from datetime import datetime
 
 from rest_framework import serializers
 
-from categories.models import Categories
-from genres.models import Genres
-from reviews.models import Comment, Review, Title
+from reviews.models import Categories, Comment, Genres, Review, Title
 from users.models import MyUser
 
 

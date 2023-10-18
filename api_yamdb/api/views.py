@@ -2,7 +2,6 @@ from django.core.exceptions import BadRequest
 from django.core.mail import send_mail
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
-from django_filters import CharFilter, FilterSet, NumberFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, generics, permissions, status, viewsets
 from rest_framework.decorators import action
@@ -11,6 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from api.filters import TitleFilter
 from api.permissions import (AdminStaffOnly, IsAdminOrReadOnly,
                              IsAuthorModeratorAdminOrReadOnly)
 from api.serializers import (CategorySerializer, CommentSerializer,
@@ -18,21 +18,8 @@ from api.serializers import (CategorySerializer, CommentSerializer,
                              ReviewSerializer, SignUpSerializer,
                              TitleCreateSerializer, TitleSerializer,
                              TokenSerializer, UserSerializer)
-from categories.models import Categories
-from genres.models import Genres
-from reviews.models import Review, Title
+from reviews.models import Categories, Genres, Review, Title
 from users.models import MyUser
-
-
-class TitleFilter(FilterSet):
-    category = CharFilter(field_name='category__slug', lookup_expr='iexact')
-    genre = CharFilter(field_name='genre__slug', lookup_expr='iexact')
-    name = CharFilter(lookup_expr='icontains')
-    year = NumberFilter()
-
-    class Meta:
-        model = Title
-        fields = ['category', 'genre', 'name', 'year']
 
 
 class TitleViewSet(viewsets.ModelViewSet):
@@ -78,7 +65,6 @@ class CategoryViewSet(viewsets.ModelViewSet):
     serializer_class = CategorySerializer
     permission_classes = (IsAdminOrReadOnly,)
     lookup_field = 'slug'
-    # permission_classes = (AllowAny,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
 
