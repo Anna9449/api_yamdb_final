@@ -99,7 +99,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
         obj = self.get_queryset().filter(
             author=self.request.user, title=self.get_title()
         )
-        if obj:
+        if obj.exists():
             raise BadRequest(
                 'Вы уже опубликовали отзыв на это произведение!'
             )
